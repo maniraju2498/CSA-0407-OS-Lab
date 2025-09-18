@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <string.h>
+
+int main(){
+    int fd = open("sysfile.txt", O_RDONLY);
+    if(fd<0){ perror("open"); return 1; }
+    int flags = fcntl(fd, F_GETFL);
+    printf("Flags: %d\n", flags);
+    off_t off = lseek(fd, 0, SEEK_END);
+    printf("File length via lseek: %ld\n", (long)off);
+    struct stat st; stat("sysfile.txt",&st);
+    printf("Size via stat: %lld\n", (long long)st.st_size);
+    close(fd);
+
+    DIR *d = opendir(".");
+    struct dirent *de;
+    printf("Directory entries:\n");
+    while((de=readdir(d))!=NULL) printf("%s\n", de->d_name);
+    closedir(d);
+    return 0;
+}
