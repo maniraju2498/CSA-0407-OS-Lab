@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <string.h>
+
+#define N 20
+int disk[N];
+
+void seq_alloc(int start,int len){
+    printf("Seq alloc from %d len %d: ", start, len);
+    for(int i=0;i<len;i++) printf("%d ", start+i);
+    printf("\n");
+}
+
+void ind_alloc(int idx_block, int blocks[], int k){
+    printf("Index block %d points to: ", idx_block);
+    for(int i=0;i<k;i++) printf("%d ", blocks[i]);
+    printf("\n");
+}
+
+void link_alloc(int start, int next[], int len){
+    printf("Link alloc chain: ");
+    int cur=start;
+    for(int i=0;i<len;i++){
+        printf("%d ", cur);
+        cur = next[cur];
+    }
+    printf("\n");
+}
+
+int main(){
+    memset(disk,0,sizeof(disk));
+    seq_alloc(2,5);
+    int blocks[] = {5,7,9};
+    ind_alloc(3, blocks, 3);
+    int next[N]; for(int i=0;i<N;i++) next[i]=-1;
+    next[10]=12; next[12]=15; next[15]=-1;
+    link_alloc(10,next,3);
+    return 0;
+}
