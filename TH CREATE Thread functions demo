@@ -1,0 +1,20 @@
+// THREAD_OPS - thread_ops.c
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
+
+void *fn(void *arg){
+    printf("Thread started\n");
+    pthread_exit((void*)42);
+}
+
+int main(){
+    pthread_t t;
+    pthread_create(&t, NULL, fn, NULL);
+    void *ret;
+    pthread_join(t, &ret);
+    printf("Thread returned %ld\n", (long)ret);
+    pthread_t main_tid = pthread_self();
+    printf("Main thread id equals t? %s\n", pthread_equal(main_tid,t) ? "yes":"no");
+    return 0;
+}
