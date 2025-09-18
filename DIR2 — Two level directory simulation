@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAXUSERS 10
+#define MAXFILES 50
+
+typedef struct {
+    char *user;
+    char *files[MAXFILES];
+    int fc;
+} Dir;
+
+Dir dirs[MAXUSERS];
+int uc=0;
+
+Dir* find_user(const char *u){
+    for(int i=0;i<uc;i++) if(strcmp(dirs[i].user,u)==0) return &dirs[i];
+    return NULL;
+}
+
+void create_user(const char *u){ dirs[uc].user=strdup(u); dirs[uc].fc=0; uc++; }
+void create_file(const char *u, const char *f){
+    Dir *d=find_user(u);
+    if(!d){ create_user(u); d=&dirs[uc-1]; }
+    d->files[d->fc++]=strdup(f);
+    printf("Created %s/%s\n",u,f);
+}
+void list_user(const char *u){
+    Dir *d=find_user(u);
+    if(!d){ printf("No user\n"); return; }
+    printf("Files for %s:\n",u);
+    for(int i=0;i<d->fc;i++) printf("%s\n",d->files[i]);
+}
+int main(){
+    create_file("alice","a.txt");
+    create_file("bob","b.txt");
+    create_file("alice","a2.txt");
+    list_user("alice"); list_user("bob");
+    return 0;
+}
