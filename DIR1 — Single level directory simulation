@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAXFILES 100
+char *files[MAXFILES];
+int count=0;
+
+void create(char *name){
+    if(count<MAXFILES) { files[count++]=strdup(name); printf("Created %s\n",name); }
+    else printf("Dir full\n");
+}
+void deletef(char *name){
+    for(int i=0;i<count;i++){
+        if(strcmp(files[i],name)==0){ free(files[i]); files[i]=files[--count]; printf("Deleted %s\n",name); return; }
+    }
+    printf("Not found\n");
+}
+void list(){ printf("Files:\n"); for(int i=0;i<count;i++) printf("%s\n",files[i]); }
+
+int main(){
+    create("f1.txt"); create("f2.c"); list();
+    deletef("f1.txt"); list();
+    return 0;
+}
