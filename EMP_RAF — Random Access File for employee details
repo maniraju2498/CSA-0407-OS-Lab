@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <string.h>
+
+typedef struct { int id; char name[20]; float sal; } Emp;
+
+int main(){
+    FILE *f = fopen("emp.dat","w+b");
+    Emp e1={1,"Alice",5000}, e2={2,"Bob",6000}, e3={3,"Carol",7000};
+    fwrite(&e1,sizeof(e1),1,f); fwrite(&e2,sizeof(e2),1,f); fwrite(&e3,sizeof(e3),1,f);
+    // read 2nd record (index 1)
+    fseek(f, sizeof(Emp)*1, SEEK_SET);
+    Emp r; fread(&r,sizeof(r),1,f);
+    printf("Read emp: %d %s %.2f\n", r.id, r.name, r.sal);
+    fclose(f);
+    return 0;
+}
