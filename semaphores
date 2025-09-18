@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+
+sem_t mutex, wrt;
+int readcount = 0;
+int shared = 0;
+
+void *reader(void *arg){
+    int id = (int)(long)arg;
+    sem_wait(&mutex);
+    readcount++;
+    if (readcount==1) sem_wait(&wrt);
+    sem_post(&mutex);
+
+    printf("Reader %d reads %d\n", id, shared);
+    sleep(1);
+
+    sem_wait(&mutex);
+    readcount--;
+    if (readcount==0) sem_post(&wrt);
+    sem_post(&mutex);
+    return NULL;
+}
+
+void *writer(void *arg){
+    int id = (int)(long)arg;
+    sem_wait(&wrt);
+    shared += 10;
+    printf("Writer %d wrote %d\n", id, shared);
+    sleep(1);
+    sem_post(&wrt);
+    return NULL;
+}
+
+int main(){
+    sem_init(&mutex,0,1);
+    sem_init(&wrt,0,1);
+    pthread_t r[3], w[2];
+    for(int i=0;i<3;i++) pthread_create(&r[i],NULL,reader,(void*)(long)(i+1));
+    for(int i=0;i<2;i++) pthread_create(&w[i],NULL,writer,(void*)(long)(i+1));
+    for(int i=0;i<3;i++) pthread_join(r[i],NULL);
+    for(int i=0;i<2;i++) pthread_join(w[i],NULL);
+    sem_destroy(&mutex); sem_destroy(&wrt);
+    return 0;
+}
