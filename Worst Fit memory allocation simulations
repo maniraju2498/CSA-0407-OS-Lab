@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+
+void first_fit(int blocks[], int m, int process[], int n) {
+    int allocation[n]; memset(allocation, -1, sizeof(allocation));
+    for (int i=0;i<n;i++){
+        for (int j=0;j<m;j++){
+            if (blocks[j] >= process[i]){ allocation[i]=j; blocks[j]-=process[i]; break; }
+        }
+    }
+    printf("First Fit allocation:\n");
+    for(int i=0;i<n;i++) printf("P%d -> %s\n", i+1, allocation[i]==-1?"Not Allocated": (char [20]){0});
+}
+
+int best_idx(int blocks[], int m, int size){
+    int best=-1;
+    for(int i=0;i<m;i++) if(blocks[i]>=size && (best==-1 || blocks[i]<blocks[best])) best=i;
+    return best;
+}
+
+int worst_idx(int blocks[], int m, int size){
+    int worst=-1;
+    for(int i=0;i<m;i++) if(blocks[i]>=size && (worst==-1 || blocks[i]>blocks[worst])) worst=i;
+    return worst;
+}
+
+void best_fit(int blocks[], int m, int process[], int n) {
+    int allocation[n]; memset(allocation, -1, sizeof(allocation));
+    for (int i=0;i<n;i++){
+        int idx = best_idx(blocks,m,process[i]);
+        if (idx!=-1){ allocation[i]=idx; blocks[idx]-=process[i]; }
+    }
+    printf("Best Fit allocation:\n");
+    for(int i=0;i<n;i++) printf("P%d -> %s\n", i+1, allocation[i]==-1?"Not Allocated":"Allocated");
+}
+
+void worst_fit(int blocks[], int m, int process[], int n) {
+    int allocation[n]; memset(allocation, -1, sizeof(allocation));
+    for (int i=0;i<n;i++){
+        int idx = worst_idx(blocks,m,process[i]);
+        if (idx!=-1){ allocation[i]=idx; blocks[idx]-=process[i]; }
+    }
+    printf("Worst Fit allocation:\n");
+    for(int i=0;i<n;i++) printf("P%d -> %s\n", i+1, allocation[i]==-1?"Not Allocated":"Allocated");
+}
+
+int main(){
+    int blocks1[] = {100, 500, 200, 300, 600};
+    int blocks2[] = {100, 500, 200, 300, 600};
+    int blocks3[] = {100, 500, 200, 300, 600};
+    int process[] = {212, 417, 112, 426};
+    int m = 5, n = 4;
+    first_fit(blocks1,m,process,n);
+    best_fit(blocks2,m,process,n);
+    worst_fit(blocks3,m,process,n);
+    return 0;
+}
